@@ -14,7 +14,7 @@ class _LoginState extends State<Login> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 100.0),
+            padding: EdgeInsets.only(top: 100.0),
             child: Center(
               child: Image.asset(
                 'graphics/logo.png',
@@ -30,10 +30,8 @@ class _LoginState extends State<Login> {
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
                 child: CupertinoButton.filled(
-
                   child: Text('Log In'),
                   onPressed: _pushHome,
-
                 ),
               )
             ],
@@ -60,7 +58,12 @@ class _LoginState extends State<Login> {
             backgroundColor: Theme.of(context).backgroundColor,
             appBar: AppBar(
               actions: [
-                IconButton(icon: Icon(Icons.settings, color: Colors.white,), onPressed: null)
+                IconButton(
+                    icon: Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                    ),
+                    onPressed: null)
               ],
             ),
           );
