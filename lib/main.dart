@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:faunatic_front_end/random_words.dart';
+import 'package:faunatic_front_end/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -13,9 +13,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Startup Name Generator',
       theme: ThemeData(
-        primaryColor: Colors.white,
+        backgroundColor: Colors.green[400],
+        accentColor: Colors.greenAccent,
+        primarySwatch: Colors.green,
       ),
-      home: RandomWords(),
+      home: Login(),
     );
   }
 }
