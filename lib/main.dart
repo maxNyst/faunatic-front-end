@@ -11,11 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
       theme: ThemeData(
-        backgroundColor: Colors.green[400],
-        accentColor: Colors.greenAccent,
-        primarySwatch: Colors.green,
+        textTheme: TextTheme(
+
+        ),
+        primaryColor: Colors.green[400],
+        scaffoldBackgroundColor: Colors.green,
       ),
       home: Login(),
     );

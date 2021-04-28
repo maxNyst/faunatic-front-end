@@ -10,7 +10,6 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         children: [
           Padding(
@@ -18,8 +17,7 @@ class _LoginState extends State<Login> {
             child: Center(
               child: Image.asset(
                 'graphics/logo.png',
-                color: Colors.white,
-                fit: BoxFit.cover,
+                color: Colors.white70,
               ),
             ),
           ),
@@ -29,7 +27,8 @@ class _LoginState extends State<Login> {
               textInput('Last Name'),
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
-                child: CupertinoButton.filled(
+                child: CupertinoButton(
+                  color: Colors.green[600],
                   child: Text('Log In'),
                   onPressed: _pushHome,
                 ),
@@ -45,7 +44,12 @@ class _LoginState extends State<Login> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
       child: TextField(
-        decoration: InputDecoration(hintText: text),
+        decoration: InputDecoration(
+            hintText: text,
+          hintStyle: TextStyle(
+              color: Colors.white38
+          ),
+        ),
       ),
     );
   }
@@ -55,17 +59,27 @@ class _LoginState extends State<Login> {
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
             appBar: AppBar(
               actions: [
                 IconButton(
                     icon: Icon(
                       Icons.settings,
-                      color: Colors.white,
                     ),
-                    onPressed: null)
+                    onPressed: pushSettings)
               ],
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  void pushSettings() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(),
           );
         },
       ),
