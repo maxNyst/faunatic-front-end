@@ -16,6 +16,12 @@ class MyApp extends StatelessWidget {
 
         ),
         primaryColor: Colors.green[400],
+
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            primary: Colors.white70,
+          ),
+        ),
         scaffoldBackgroundColor: Colors.green,
       ),
       home: Login(),

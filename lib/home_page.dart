@@ -7,6 +7,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,15 +26,37 @@ class _LoginState extends State<Login> {
           ),
           Column(
             children: [
-              textInput('First Name'),
-              textInput('Last Name'),
-              Padding(
-                padding: const EdgeInsets.only(top: 50.0),
-                child: CupertinoButton(
-                  color: Colors.green[600],
-                  child: Text('Log In'),
-                  onPressed: _pushHome,
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
+                child: TextField(
+                  controller: _textController,
+                  onSubmitted: _handleSubmitted,
+                  decoration: InputDecoration(
+                    hintText: 'First Name',
+                    hintStyle: TextStyle(color: Colors.white38),
+                  ),
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
+                child: TextField(
+                  controller: _textController,
+                  onSubmitted: _handleSubmitted,
+                  decoration: InputDecoration(
+                    hintText: 'Last Name',
+                    hintStyle: TextStyle(color: Colors.white38),
+                  ),
+                ),
+              ),
+              CupertinoButton(
+                color: Colors.green[600],
+                child: Text('Log In'),
+                onPressed: () => _handleSubmitted(_textController.text),
+              ),
+              TextButton(
+                // color: Colors.green[600],
+                child: Text('Create Account'),
+                onPressed: () => print('pressed'),
               )
             ],
           )
@@ -40,21 +65,8 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget textInput(String text) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-      child: TextField(
-        decoration: InputDecoration(
-            hintText: text,
-          hintStyle: TextStyle(
-              color: Colors.white38
-          ),
-        ),
-      ),
-    );
-  }
-
   void _pushHome() {
+    final _searchController =  TextEditingController();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -65,16 +77,17 @@ class _LoginState extends State<Login> {
                     icon: Icon(
                       Icons.settings,
                     ),
-                    onPressed: pushSettings)
+                    onPressed: _pushSettings)
               ],
             ),
+            body: TextField(controller: _searchController,),
           );
         },
       ),
     );
   }
 
-  void pushSettings() {
+  void _pushSettings() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -84,5 +97,13 @@ class _LoginState extends State<Login> {
         },
       ),
     );
+  }
+
+  void _handleSubmitted(String text) {
+    if (text == 'test') {
+      _pushHome();
+    }
+    print('ERROR: wrong log in credentials - use "test".');
+    _textController.clear();
   }
 }
