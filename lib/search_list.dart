@@ -1,27 +1,61 @@
 import 'package:english_words/english_words.dart';
+import 'package:faunatic_front_end/search_item.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class RandomWords extends StatefulWidget {
+class SearchList extends StatefulWidget {
   @override
-  _RandomWordsState createState() => _RandomWordsState();
+  _SearchListState createState() => _SearchListState();
 }
 
-class _RandomWordsState extends State<RandomWords> {
+class _SearchListState extends State<SearchList> {
   final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
   final _biggerFont = TextStyle(fontSize: 18.0);
+  final _searchController = TextEditingController();
+  final _focus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: TextField(
+          controller: _searchController,
+          focusNode: _focus,
+          onSubmitted: _handleSearch,
+          decoration: InputDecoration(hintText: 'Search API here'),
+        ),
         actions: [
           IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
       ),
       body: _buildSuggestions(),
     );
+  }
+
+  void _handleSearch(String search) async {
+    var map = {'term': _searchController.text};
+    _searchController.clear();
+    _focus.requestFocus();
+    final response = await http.get(Uri.http('localhost:8080', '/search', map));
+
+    if (response.statusCode == 200) {
+      var searchItemList = [];
+      print(response.body);
+      List<dynamic> list = jsonDecode(response.body);
+      for (var i in list) {
+        searchItemList.add(SearchItem.fromJson(i));
+
+      }
+
+      print('__________');
+      list.forEach((element) {print(element);});
+
+
+    } else {
+      print(response.request.toString());
+    }
   }
 
   void _pushSaved() {
