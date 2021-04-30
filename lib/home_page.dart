@@ -1,88 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class Login extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _LoginState extends State<Login> {
-  final _textController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+class _HomePageState extends State<HomePage> {
+  final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 100.0),
-            child: Center(
-              child: Image.asset(
-                'graphics/logo.png',
-                color: Colors.white70,
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.settings,
               ),
-            ),
-          ),
-          Column(
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-                child: TextField(
-                  controller: _textController,
-                  onSubmitted: _handleSubmitted,
-                  decoration: InputDecoration(
-                    hintText: 'First Name',
-                    hintStyle: TextStyle(color: Colors.white38),
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-                child: TextField(
-                  controller: _textController,
-                  onSubmitted: _handleSubmitted,
-                  decoration: InputDecoration(
-                    hintText: 'Last Name',
-                    hintStyle: TextStyle(color: Colors.white38),
-                  ),
-                ),
-              ),
-              CupertinoButton(
-                color: Colors.green[600],
-                child: Text('Log In'),
-                onPressed: () => _handleSubmitted(_textController.text),
-              ),
-              TextButton(
-                // color: Colors.green[600],
-                child: Text('Create Account'),
-                onPressed: () => print('pressed'),
-              )
-            ],
-          )
+              onPressed: _pushSettings)
         ],
       ),
-    );
-  }
-
-  void _pushHome() {
-    final _searchController =  TextEditingController();
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              actions: [
-                IconButton(
-                    icon: Icon(
-                      Icons.settings,
-                    ),
-                    onPressed: _pushSettings)
-              ],
-            ),
-            body: TextField(controller: _searchController,),
-          );
-        },
+      body: TextField(
+        controller: _searchController,
+        onSubmitted: _handleSearch,
       ),
     );
   }
@@ -99,11 +42,44 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _handleSubmitted(String text) {
-    if (text == 'test') {
-      _pushHome();
+  void _handleSearch(String search) async {
+    var map = {'name': 'asdasd'};
+    final response =
+        await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/hello', map));
+    if (response.statusCode == 200) {
+      print(response.body);
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+
+      print(response.request.toString());
     }
-    print('ERROR: wrong log in credentials - use "test".');
-    _textController.clear();
+  }
+}
+
+class Taxa {
+  final String name;
+
+  Taxa({@required this.name});
+
+  factory Taxa.fromJson(Map<String, dynamic> json) {
+    return Taxa(
+      name: json['title'],
+    );
+  }
+}
+
+Future<Taxa> fetchAlbum() async {
+  final response =
+      await http.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Taxa.fromJson(jsonDecode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
   }
 }
