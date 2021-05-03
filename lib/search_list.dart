@@ -113,8 +113,6 @@ class _SearchListState extends State<SearchList> {
   }
 
   Widget _buildRow(SearchItem item) {
-    final alreadySaved = _saved.contains(item);
-
     return ListTile(
 
       title: Text(
@@ -122,8 +120,7 @@ class _SearchListState extends State<SearchList> {
         style: _biggerFont,
       ),
       trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
+        Icons.arrow_forward_ios
       ),
       onTap: () => setState(
         () {
@@ -133,5 +130,12 @@ class _SearchListState extends State<SearchList> {
     );
   }
 
-  void _moreInformationFromAPI(int taxonId) {}
+  void _moreInformationFromAPI(int taxonId) async {
+    final response =
+    await http.get(
+        Uri.https('group7-15.pvt.dsv.su.se', '/search', {'id': taxonId}));
+    if (response.statusCode == 200) {
+      print(response.body);
+    }
+  }
 }
