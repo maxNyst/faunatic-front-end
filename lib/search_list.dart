@@ -116,8 +116,9 @@ class _SearchListState extends State<SearchList> {
     final alreadySaved = _saved.contains(item);
 
     return ListTile(
+
       title: Text(
-        item.toString(),
+        item.swedishName.substring(0,1).toUpperCase() + item.swedishName.substring(1,item.swedishName.length).toLowerCase(),
         style: _biggerFont,
       ),
       trailing: Icon(

@@ -81,7 +81,7 @@ class _LoginState extends State<Login> {
     if (text == 'test') {
       _pushHome();
     }
-    print('ERROR: wrong log in credentials - use "test".');
+    else {print('ERROR: wrong log in credentials - use "test".');}
     _textController.clear();
   }
 }
