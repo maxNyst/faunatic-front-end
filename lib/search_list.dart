@@ -54,13 +54,12 @@ class _SearchListState extends State<SearchList> {
     _focus.requestFocus();
     _searchItemList.clear();
     setState(() {});
-
+    
     final response =
         await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
-
     if (response.statusCode == 200) {
       print(response.body);
-      List<dynamic> list = jsonDecode(response.body);
+      List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
       for (var i in list) {
         _searchItemList.add(SearchItem.fromJson(i));
       }
@@ -125,14 +124,13 @@ class _SearchListState extends State<SearchList> {
         alreadySaved ? Icons.favorite : Icons.favorite_border,
         color: alreadySaved ? Colors.red : null,
       ),
-      // onTap: () => setState(
-      //   () {
-      //     if (alreadySaved)
-      //       _saved.remove(item);
-      //     else
-      //       _saved.add(item);
-      //   },
-      // ),
+      onTap: () => setState(
+        () {
+          _moreInformationFromAPI(item.taxonId);
+        },
+      ),
     );
   }
+
+  void _moreInformationFromAPI(int taxonId) {}
 }
