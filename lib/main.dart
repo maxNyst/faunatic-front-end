@@ -12,7 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        textTheme: TextTheme(),
+        textTheme: TextTheme(
+
+        ),
+
         primaryColor: Colors.green[400],
         scaffoldBackgroundColor: Colors.green,
         textButtonTheme: TextButtonThemeData(

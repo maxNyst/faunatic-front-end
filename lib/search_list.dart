@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:faunatic_front_end/search_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,6 +17,7 @@ class _SearchListState extends State<SearchList> {
   final _searchController = TextEditingController();
   final _focus = FocusNode();
   final _searchItemList = <SearchItem>[];
+  bool _isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +43,9 @@ class _SearchListState extends State<SearchList> {
             ),
           ),
           Expanded(
-              child:
-                  _searchItemList.isEmpty ? Center(child: Text('IMPLEMENTERA SNURRANDE SÖKIKON')) : _buildSuggestions()),
+              child: _isSearching
+                  ? CupertinoActivityIndicator(radius: 18,)
+                  : _buildSuggestions()),
         ],
       ),
     );
@@ -53,8 +56,9 @@ class _SearchListState extends State<SearchList> {
     _searchController.clear();
     _focus.requestFocus();
     _searchItemList.clear();
+    _isSearching = true;
     setState(() {});
-    
+
     final response =
         await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
     if (response.statusCode == 200) {
@@ -66,6 +70,7 @@ class _SearchListState extends State<SearchList> {
     } else {
       print(response.request.toString());
     }
+    _isSearching = false;
     setState(() {});
   }
 
@@ -114,9 +119,12 @@ class _SearchListState extends State<SearchList> {
 
   Widget _buildRow(SearchItem item) {
     return ListTile(
-
       title: Text(
-        item.swedishName!.substring(0,1).toUpperCase() + item.swedishName!.substring(1,item.swedishName!.length).toLowerCase(),
+        item.swedishName!.substring(0, 1).toUpperCase() +
+            item.swedishName!
+                .substring(1, item.swedishName!.length)
+                .toLowerCase(),
+
         style: _biggerFont,
       ),
       trailing: Icon(

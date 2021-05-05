@@ -9,60 +9,71 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final _textController = TextEditingController();
+  final _fnTextController = TextEditingController();
+  final _lnTextController = TextEditingController();
 
-  // final FocusNode _focusNode = FocusNode();
+  final FocusNode _fnFocusNode = FocusNode();
+  final FocusNode _lnFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 100.0),
-            child: Center(
-              child: Image.asset(
-                'graphics/logo.png',
-                color: Colors.white70,
-              ),
-            ),
-          ),
-          Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 50),
+          child: Column(
             children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-                child: TextField(
-                  controller: _textController,
-                  onSubmitted: _handleSubmitted,
-                  decoration: InputDecoration(
-                    hintText: 'First Name',
-                    hintStyle: TextStyle(color: Colors.white38),
-                  ),
+              Center(
+                heightFactor: 1.3,
+                child: Image.asset(
+                  'graphics/logo.png',
+                  color: Colors.white70,
                 ),
               ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 50, vertical: 5),
-                child: TextField(
-                  controller: _textController,
-                  onSubmitted: _handleSubmitted,
-                  decoration: InputDecoration(
-                    hintText: 'Last Name',
-                    hintStyle: TextStyle(color: Colors.white38),
+              Column(
+                children: [
+                  Container(
+                    child: TextField(
+                      controller: _fnTextController,
+                      onSubmitted: (string) => _handleSubmitted(
+                          _fnTextController.text, _lnTextController.text),
+                      focusNode: _fnFocusNode,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        hintText: 'First Name',
+                        hintStyle: TextStyle(color: Colors.white38),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              CupertinoButton(
-                color: Colors.green[600],
-                child: Text('Log In'),
-                onPressed: () => _handleSubmitted(_textController.text),
-              ),
-              TextButton(
-                child: Text('Create Account'),
-                onPressed: () => print('pressed'),
+                  Container(
+                    height: 70,
+                    child: TextField(
+                      controller: _lnTextController,
+                      focusNode: _lnFocusNode,
+                      onSubmitted: (string) => _handleSubmitted(
+                          _fnTextController.text, _lnTextController.text),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person),
+                        hintText: 'Last Name',
+                        hintStyle: TextStyle(color: Colors.white38),
+                      ),
+                    ),
+                  ),
+                  CupertinoButton(
+                    color: Colors.green[600],
+                    child: Text('Log In'),
+                    onPressed: () => _handleSubmitted(
+                        _fnTextController.text, _lnTextController.text),
+                  ),
+                  TextButton(
+                    child: Text('Create Account'),
+                    onPressed: () => print('pressed'),
+                  )
+                ],
               )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
@@ -77,11 +88,19 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _handleSubmitted(String text) {
-    if (text == 'test') {
-      _pushHome();
+  void _handleSubmitted(String firstName, String lastName) {
+    if (lastName.isEmpty) {
+      _lnFocusNode.requestFocus();
+      return;
     }
-    else {print('ERROR: wrong log in credentials - use "test".');}
-    _textController.clear();
+
+    if (firstName == 'test') {
+      _pushHome();
+    } else {
+      print('ERROR: wrong log in credentials - use "test".');
+    }
+    _fnTextController.clear();
+    _lnTextController.clear();
+    _fnFocusNode.requestFocus();
   }
 }
