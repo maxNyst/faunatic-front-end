@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class SearchItem {
-  final int taxonId;
-  final String swedishName;
-  final String scientificName;
+  final int? taxonId;
+  final String? swedishName;
+  final String? scientificName;
 
   SearchItem(
-      {@required this.taxonId,
-      @required this.swedishName,
-      @required this.scientificName});
+      {required this.taxonId,
+      required this.swedishName,
+      required this.scientificName});
 
   factory SearchItem.fromJson(Map<String, dynamic> json) {
     return SearchItem(

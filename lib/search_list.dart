@@ -116,7 +116,7 @@ class _SearchListState extends State<SearchList> {
     return ListTile(
 
       title: Text(
-        item.swedishName.substring(0,1).toUpperCase() + item.swedishName.substring(1,item.swedishName.length).toLowerCase(),
+        item.swedishName!.substring(0,1).toUpperCase() + item.swedishName!.substring(1,item.swedishName!.length).toLowerCase(),
         style: _biggerFont,
       ),
       trailing: Icon(
@@ -130,7 +130,7 @@ class _SearchListState extends State<SearchList> {
     );
   }
 
-  void _moreInformationFromAPI(int taxonId) async {
+  void _moreInformationFromAPI(int? taxonId) async {
     final response =
     await http.get(
         Uri.https('group7-15.pvt.dsv.su.se', '/search', {'id': taxonId}));
