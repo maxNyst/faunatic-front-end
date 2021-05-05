@@ -8,7 +8,7 @@ part of 'species_text.dart';
 
 SpeciesText _$SpeciesTextFromJson(Map<String, dynamic> json) {
   return SpeciesText(
-    json['taxonId'] as int,
+    json['taxonId'] as int?,
     json['swedishName'] as String,
     json['scientificName'] as String,
     SpeciesTextData.fromJson(json['speciesData'] as Map<String, dynamic>),

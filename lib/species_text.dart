@@ -7,7 +7,7 @@ part 'species_text.g.dart';
 @JsonSerializable(explicitToJson: true)
 class SpeciesText {
 
-  int taxonId;
+  int? taxonId;
   String swedishName;
   String scientificName;
   SpeciesTextData speciesData;
@@ -18,5 +18,8 @@ class SpeciesText {
   factory SpeciesText.fromJson(Map<String, dynamic> json) => _$SpeciesTextFromJson(json);
   Map<String, dynamic> toJson() => _$SpeciesTextToJson(this);
 
-
+  @override
+  String toString() {
+    return 'SpeciesText{taxonId: $taxonId, swedishName: $swedishName, scientificName: $scientificName, speciesData: $speciesData}';
+  }
 }
