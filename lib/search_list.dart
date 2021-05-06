@@ -53,7 +53,92 @@ class _SearchListState extends State<SearchList> {
     );
   }
 
+  Widget _buildSuggestions() {
+    return ListView.builder(
+        padding: EdgeInsets.all(16.0),
+        itemCount: _searchItemList.length,
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
 
+          final index = i ~/ 2;
+          // if (index >= _suggestions.length) {
+          //   _suggestions.addAll(generateWordPairs().take(10));
+          // }
+          return _buildRow(_searchItemList[index]);
+        });
+  }
+
+  Widget _buildRow(SearchItem item) {
+    return ListTile(
+      title: Text(
+        item.swedishName.substring(0, 1).toUpperCase() +
+            item.swedishName
+                .substring(1, item.swedishName.length)
+                .toLowerCase(),
+        style: _biggerFont,
+      ),
+      trailing: Icon(Icons.arrow_forward_ios),
+      onTap: () => _pushAPIInfo(item.taxonId.toString()),
+    );
+  }
+
+  Future<SpeciesText> _moreInformationFromAPI(String? taxonId) async {
+    final response = await http
+        .get(Uri.https('group7-15.pvt.dsv.su.se', '/texts', {'id': taxonId}));
+    print(response.request);
+    print(jsonDecode(utf8.decode(response.bodyBytes)));
+    final s = SpeciesText.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    return s;
+  }
+
+  void _handleSearch(String string) async {
+    var map = {'term': _searchController.text};
+    setState(() {
+      _searchController.clear();
+      _focus.requestFocus();
+      _searchItemList.clear();
+      _isSearching = true;
+    });
+
+    final response =
+        await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
+    setState(() {
+      if (response.statusCode == 200) {
+        print(response.body);
+        List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var i in list) {
+          _searchItemList.add(SearchItem.fromJson(i));
+        }
+      } else {
+        print(response.request.toString());
+      }
+      _isSearching = false;
+    });
+  }
+
+  SpeciesText? _pushAPIInfo(item) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (BuildContext context) {
+        return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: FutureBuilder<SpeciesText?>(
+                  future: _moreInformationFromAPI(item),
+                  builder: (context, snap) {
+                    if (snap.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: Text(snap.data.toString())),
+                      );
+                    } else if (snap.hasError) {
+                      return Text(snap.error.toString());
+                    } else
+                      return CupertinoActivityIndicator();
+                  }),
+            ));
+      }),
+    );
+  }
 
   void _pushSaved() {
     Navigator.of(context).push(
@@ -81,76 +166,5 @@ class _SearchListState extends State<SearchList> {
         },
       ),
     );
-  }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: _searchItemList.length,
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          // if (index >= _suggestions.length) {
-          //   _suggestions.addAll(generateWordPairs().take(10));
-          // }
-          return _buildRow(_searchItemList[index]);
-        });
-  }
-
-  Widget _buildRow(SearchItem item) {
-    return ListTile(
-      title: Text(
-        item.swedishName.substring(0, 1).toUpperCase() +
-            item.swedishName
-                .substring(1, item.swedishName.length)
-                .toLowerCase(),
-        style: _biggerFont,
-      ),
-      trailing: Icon(Icons.arrow_forward_ios),
-      onTap: () => setState(
-        () {
-          _moreInformationFromAPI(item.taxonId.toString());
-        },
-      ),
-    );
-  }
-
-  void _moreInformationFromAPI(String? taxonId) async {
-    final response = await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/texts', {'id': taxonId}));
-    print(response.request);
-    print(jsonDecode(utf8.decode(response.bodyBytes)));
-    final s = SpeciesText.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-    if (response.statusCode == 200) {
-      print(s.speciesData.conservationMeasures);
-      print(s.speciesData.ecology);
-      print(s.speciesData.spreadAndStatus);
-      print(s.speciesData.threat);
-      print(s.speciesData.characteristic);
-    }
-  }
-  void _handleSearch(String string) async {
-    var map = {'term': _searchController.text};
-    setState(() {
-    _searchController.clear();
-    _focus.requestFocus();
-    _searchItemList.clear();
-    _isSearching = true;
-    });
-
-    final response =
-    await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
-    setState(() {
-    if (response.statusCode == 200) {
-      print(response.body);
-      List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
-      for (var i in list) {
-        _searchItemList.add(SearchItem.fromJson(i));
-      }
-    } else {
-      print(response.request.toString());
-    }
-    _isSearching = false;
-    });
   }
 }
