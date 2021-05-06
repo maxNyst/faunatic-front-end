@@ -31,6 +31,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
     implementation "androidx.multidex:multidex:2.0.1"
+    implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }
 
 android {
@@ -39,7 +41,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.faunatic_front_end"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
