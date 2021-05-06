@@ -8,8 +8,8 @@ part 'species_text.g.dart';
 class SpeciesText {
 
   int? taxonId;
-  String swedishName;
-  String scientificName;
+  String? swedishName;
+  String? scientificName;
   SpeciesTextData speciesData;
 
   SpeciesText(

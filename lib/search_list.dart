@@ -101,9 +101,9 @@ class _SearchListState extends State<SearchList> {
   Widget _buildRow(SearchItem item) {
     return ListTile(
       title: Text(
-        item.swedishName!.substring(0, 1).toUpperCase() +
-            item.swedishName!
-                .substring(1, item.swedishName!.length)
+        item.swedishName.substring(0, 1).toUpperCase() +
+            item.swedishName
+                .substring(1, item.swedishName.length)
                 .toLowerCase(),
         style: _biggerFont,
       ),
@@ -131,14 +131,16 @@ class _SearchListState extends State<SearchList> {
   }
   void _handleSearch(String string) async {
     var map = {'term': _searchController.text};
+    setState(() {
     _searchController.clear();
     _focus.requestFocus();
     _searchItemList.clear();
     _isSearching = true;
-    setState(() {});
+    });
 
     final response =
     await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
+    setState(() {
     if (response.statusCode == 200) {
       print(response.body);
       List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
@@ -149,6 +151,6 @@ class _SearchListState extends State<SearchList> {
       print(response.request.toString());
     }
     _isSearching = false;
-    setState(() {});
+    });
   }
 }

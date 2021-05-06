@@ -8,11 +8,11 @@ part of 'species_text_data.dart';
 
 SpeciesTextData _$SpeciesTextDataFromJson(Map<String, dynamic> json) {
   return SpeciesTextData(
-    json['characteristic'] as String,
-    json['conservationMeasures'] as String,
-    json['ecology'] as String,
-    json['spreadAndStatus'] as String,
-    json['threat'] as String,
+    json['characteristic'] as String?,
+    json['conservationMeasures'] as String?,
+    json['ecology'] as String?,
+    json['spreadAndStatus'] as String?,
+    json['threat'] as String?,
   );
 }
 

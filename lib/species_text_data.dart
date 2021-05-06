@@ -3,11 +3,11 @@ part 'species_text_data.g.dart';
 
 @JsonSerializable()
 class SpeciesTextData {
-  String characteristic;
-  String conservationMeasures;
-  String ecology;
-  String spreadAndStatus;
-  String threat;
+  String? characteristic;
+  String? conservationMeasures;
+  String? ecology;
+  String? spreadAndStatus;
+  String? threat;
 
 
   SpeciesTextData(this.characteristic, this.conservationMeasures, this.ecology,

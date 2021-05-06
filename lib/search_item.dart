@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class SearchItem {
-  final int? taxonId;
-  final String? swedishName;
-  final String? scientificName;
+  final int taxonId;
+  final String swedishName;
+  final String scientificName;
 
   SearchItem(
       {required this.taxonId,
