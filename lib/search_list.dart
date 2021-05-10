@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:faunatic_front_end/search_item.dart';
+import 'package:faunatic_front_end/species_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,6 @@ class SearchList extends StatefulWidget {
 }
 
 class _SearchListState extends State<SearchList> {
-  // final _suggestions = <WordPair>[];
   final _saved = <WordPair>{};
   final _biggerFont = TextStyle(fontSize: 18.0);
   final _searchController = TextEditingController();
@@ -44,34 +44,100 @@ class _SearchListState extends State<SearchList> {
           ),
           Expanded(
               child: _isSearching
-                  ? CupertinoActivityIndicator(radius: 18,)
+                  ? CupertinoActivityIndicator(
+                      radius: 18,
+                    )
                   : _buildSuggestions()),
         ],
       ),
     );
   }
 
+  Widget _buildSuggestions() {
+    return ListView.builder(
+        padding: EdgeInsets.all(16.0),
+        itemCount: _searchItemList.length,
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+
+          final index = i ~/ 2;
+          // if (index >= _suggestions.length) {
+          //   _suggestions.addAll(generateWordPairs().take(10));
+          // }
+          return _buildRow(_searchItemList[index]);
+        });
+  }
+
+  Widget _buildRow(SearchItem item) {
+    return ListTile(
+      title: Text(
+        item.swedishName.substring(0, 1).toUpperCase() +
+            item.swedishName
+                .substring(1, item.swedishName.length)
+                .toLowerCase(),
+        style: _biggerFont,
+      ),
+      trailing: Icon(Icons.arrow_forward_ios),
+      onTap: () => _pushAPIInfo(item.taxonId.toString()),
+    );
+  }
+
+  Future<SpeciesText> _moreInformationFromAPI(String? taxonId) async {
+    final response = await http
+        .get(Uri.https('group7-15.pvt.dsv.su.se', '/texts', {'id': taxonId}));
+    print(response.request);
+    print(jsonDecode(utf8.decode(response.bodyBytes)));
+    final s = SpeciesText.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
+    return s;
+  }
+
   void _handleSearch(String string) async {
     var map = {'term': _searchController.text};
-    _searchController.clear();
-    _focus.requestFocus();
-    _searchItemList.clear();
-    _isSearching = true;
-    setState(() {});
+    setState(() {
+      _searchController.clear();
+      _focus.requestFocus();
+      _searchItemList.clear();
+      _isSearching = true;
+    });
 
     final response =
         await http.get(Uri.https('group7-15.pvt.dsv.su.se', '/search', map));
-    if (response.statusCode == 200) {
-      print(response.body);
-      List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
-      for (var i in list) {
-        _searchItemList.add(SearchItem.fromJson(i));
+    setState(() {
+      if (response.statusCode == 200) {
+        print(response.body);
+        List<dynamic> list = jsonDecode(utf8.decode(response.bodyBytes));
+        for (var i in list) {
+          _searchItemList.add(SearchItem.fromJson(i));
+        }
+      } else {
+        print(response.request.toString());
       }
-    } else {
-      print(response.request.toString());
-    }
-    _isSearching = false;
-    setState(() {});
+      _isSearching = false;
+    });
+  }
+
+  SpeciesText? _pushAPIInfo(item) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (BuildContext context) {
+        return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: FutureBuilder<SpeciesText?>(
+                  future: _moreInformationFromAPI(item),
+                  builder: (context, snap) {
+                    if (snap.hasData) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: Text(snap.data.toString())),
+                      );
+                    } else if (snap.hasError) {
+                      return Text(snap.error.toString());
+                    } else
+                      return CupertinoActivityIndicator();
+                  }),
+            ));
+      }),
+    );
   }
 
   void _pushSaved() {
@@ -101,44 +167,4 @@ class _SearchListState extends State<SearchList> {
       ),
     );
   }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: _searchItemList.length,
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          // if (index >= _suggestions.length) {
-          //   _suggestions.addAll(generateWordPairs().take(10));
-          // }
-          return _buildRow(_searchItemList[index]);
-        });
-  }
-
-  Widget _buildRow(SearchItem item) {
-    final alreadySaved = _saved.contains(item);
-
-    return ListTile(
-      title: Text(
-        item.swedishName.substring(0, 1).toUpperCase() +
-            item.swedishName
-                .substring(1, item.swedishName.length)
-                .toLowerCase(),
-        style: _biggerFont,
-      ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () => setState(
-        () {
-          _moreInformationFromAPI(item.taxonId);
-        },
-      ),
-    );
-  }
-
-  void _moreInformationFromAPI(int taxonId) {}
 }
